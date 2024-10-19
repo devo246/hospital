@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="icon.png" />
+    <title>Employee</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        padding: 0;
+        margin: 0;
+        text-decoration: none;
+        list-style: none;
+        transition: all 0.2s linear;
+        font-family: Verdana, Geneva, Tahoma, sans-serif;
+      }
+
+      body {
+        margin: 20px;
+        overflow-x: hidden; /* إلغاء التمرير الأفقي */
+        background-color: #f8f9fa; /* لون خلفية الصفحة */
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+      }
+
+      th,
+      td {
+        border: 1px solid #ddd;
+        padding: 10px;
+        text-align: left;
+      }
+
+      th {
+        background-color: #007bff; /* لون خلفية رؤوس الأعمدة */
+        color: white; /* لون النص في رؤوس الأعمدة */
+      }
+
+      img {
+        width: 50px;
+        height: auto;
+      }
+
+      .search-container {
+        margin: 20px 0;
+        display: flex; /* جعل حاوية البحث مرنة */
+        gap: 10px; /* فاصل بين حقل البحث والأزرار */
+      }
+
+      #searchInput {
+        padding: 10px;
+        border: 1px solid #007bff; /* لون الحدود لحقل البحث */
+        border-radius: 4px;
+        width: 200px;
+      }
+
+      button {
+        padding: 10px 15px;
+        background-color: #007bff; /* لون زر الإضافة */
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+
+      button:hover {
+        background-color: #0056b3; /* لون زر الإضافة عند التحويم */
+      }
+
+      .error-message {
+        color: red;
+        margin-top: 10px;
+        display: none; /* إخفاء الرسالة في البداية */
+      }
+
+      fieldset {
+        margin: 10px;
+        padding: 20px;
+        overflow-x: hidden;
+        width: 100%; /* يجعل fieldset يأخذ عرض كامل */
+        border: 2px solid #007bff; /* لون حدود الـ fieldset */
+        border-radius: 8px; /* زوايا دائرية للـ fieldset */
+        background-color: #ffffff; /* لون خلفية الـ fieldset */
+      }
+
+      legend {
+        font-weight: 600;
+        color: #007bff; /* لون النص في الـ legend */
+      }
+
+      fieldset .box {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 30px;
+        align-items: center;
+      }
+
+      fieldset .box div {
+        width: 100%;
+        display: flex;
+        align-items: center;
+      }
+
+      fieldset .box div h4 {
+        padding-right: 5px;
+        color: #333; /* لون النص لعناوين الحقول */
+      }
+
+      fieldset div input:not([type="radio"]) {
+        padding: 8px 5px;
+        font-size: 16px;
+        width: 100%; /* تجعل الحقول تأخذ عرض كامل */
+        border: 1px solid #ccc; /* لون الحدود للحقول */
+        border-radius: 4px; /* زوايا دائرية للحقول */
+      }
+
+      fieldset div input[type="radio"] {
+        margin: 10px;
+      }
+
+      fieldset button {
+        margin-top: 20px;
+        width: 100%;
+        background-color: #007bff; /* لون زر الإضافة */
+        color: white;
+      }
+
+      /* Small screen (mobile) */
+      @media (max-width: 767px) {
+        fieldset {
+          width: 100%; /* يجعل fieldset يأخذ عرض كامل على الشاشات الصغيرة */
+        }
+
+        fieldset .box {
+          grid-template-columns: 1fr; /* عرض كامل للحقول على الشاشات الصغيرة */
+        }
+
+        #searchInput {
+          width: 100%; /* جعل حقل البحث يأخذ عرض كامل */
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <fieldset>
+      <legend>Add New Employee</legend>
+      <div class="box">
+        <input type="text" id="name" placeholder="Name" required />
+        <input type="number" id="age" placeholder="Age" required />
+        <input type="number" id="phone" placeholder="Phone Number" required />
+
+        <div>
+          <h4>Gender:</h4>
+          <label for="male">Male</label>
+          <input type="radio" name="gender" id="male" value="Male" required />
+          <label for="female">Female</label>
+          <input
+            type="radio"
+            name="gender"
+            id="female"
+            value="Female"
+            required
+          />
+        </div>
+
+        <input type="text" id="profession" placeholder="Profession" required />
+        <input
+          type="text"
+          id="specialization"
+          placeholder="Specialization"
+          required
+        />
+        <input
+          type="text"
+          id="residence"
+          placeholder="Place Of Residence"
+          required
+        />
+
+        <div>
+          <h4 for="image">Image:</h4>
+          <input type="file" id="image" accept="image/*" required />
+        </div>
+      </div>
+      <button onclick="addEmp()">Add Employee</button>
+    </fieldset>
+
+    <div class="search-container">
+      <input type="text" id="searchInput" placeholder="Search by name or ID" />
+      <button onclick="searchEmployee()">Search</button>
+      <button onclick="resetSearch()" style="background-color: red">
+        Reset
+      </button>
+      <div class="error-message" id="errorMessage">No employee found!</div>
+      <!-- رسالة الخطأ -->
+    </div>
+
+    <table id="employeeTable">
+      <thead>
+        <tr>
+          <th>No</th>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Age</th>
+          <th>Phone Number</th>
+          <th>Gender</th>
+          <th>Profession</th>
+          <th>Specialization</th>
+          <th>Place Of Residence</th>
+          <th>Image</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Rows will be added here -->
+      </tbody>
+    </table>
+
+    <script src="human.js"></script>
+  </body>
+</html>

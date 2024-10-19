@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medical Diagnosis</title>
+    <style>
+        body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 20px;
+    background-color: #f4f4f9;
+    overflow-x: hidden; /* منع تمرير الموقع بشكل أفقي */
+}
+
+h1 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+h3 {
+    color: #555;
+    text-align: center;
+}
+
+.firstTable {
+    width: 100%;
+    margin-bottom: 20px;
+    border: 1px solid #ddd;
+    padding: 15px;
+    border-radius: 5px;
+    background-color: white;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.firstTable input[type="text"],
+.firstTable input[type="date"] {
+    width: 100%;
+    max-width: 400px;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+/* حاوية الجدول مع تمرير أفقي */
+.table-wrapper {
+    overflow-x: auto; /* تفعيل التمرير الأفقي */
+    margin-top: 20px;
+}
+
+table {
+    width: 100%;
+    min-width: 900px; /* ضمان عرض الجدول الأكبر من الشاشة ليظهر التمرير */
+    border-collapse: collapse;
+}
+
+table, th, td {
+    border: 1px solid #ddd;
+}
+
+th {
+    padding: 10px;
+    text-align: center;
+    background-color: #007bff;
+    color: white;
+    font-weight: bold;
+}
+
+.subheader th {
+    background-color: #0056b3;
+}
+
+textarea {
+    height: 40px;
+    width: 100%;
+    resize: none;
+    box-sizing: border-box;
+    border: none;
+    font-size: 16px;
+    text-align: center;
+}
+
+textarea:focus {
+    border: none;
+    outline: none;
+    background-color: #eef;
+}
+
+td {
+    background-color: white;
+}
+
+tbody tr:nth-child(odd) {
+    background-color: #f9f9f9;
+}
+
+tbody tr:nth-child(even) {
+    background-color: #fff;
+}
+
+.add-button,
+.save-button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.add-button:hover,
+.save-button:hover {
+    background-color: #0056b3;
+}
+
+@media (max-width: 768px) {
+    .firstTable input[type="text"],
+    .firstTable input[type="date"] {
+        max-width: 100%;
+        font-size: 14px;
+        padding: 8px;
+    }
+
+    th, td {
+        font-size: 14px;
+        padding: 8px;
+    }
+
+    textarea {
+        font-size: 14px;
+        height: 35px;
+    }
+
+    .add-button,
+    .save-button {
+        padding: 8px 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    th, td {
+        font-size: 12px;
+        padding: 5px;
+    }
+
+    textarea {
+        font-size: 12px;
+        height: 30px;
+    }
+
+    .add-button,
+    .save-button {
+        font-size: 14px;
+        padding: 8px 12px;
+    }
+}
+
+    </style>
+</head>
+<body>
+    <h1>Nursing Record</h1>
+    <h3 id="nameDisplay">Name: </h3>
+    
+    <div id="tablesContainer">
+        <!-- محتوى الجدول سيتم تحميله هنا -->
+    </div>
+
+    <button class="add-button" onclick="addTable()">Add Nursing Record</button>
+    <button class="save-button" onclick="saveData()">Save Data</button>
+
+<script>
+    let recordId = 0; // Variable to generate a unique ID
+
+    function displayNameById(patientId) {
+        const records = JSON.parse(localStorage.getItem('nursingRecords')) || [];
+        const record = records.find(record => record.patientId == patientId); // Search for the record by patientId
+
+        const nameDisplay = document.getElementById('nameDisplay'); // Get the h3 element by ID
+        if (record) {
+            nameDisplay.innerText = `${record.patientName || 'Unknown Patient'} - ${record.unit || ''}`;
+        } else {
+            nameDisplay.innerText = 'Record not found'; // Message if the record is not found
+        }
+    }
+
+    function loadData() {
+        const tablesContainer = document.getElementById('tablesContainer');
+        const records = JSON.parse(localStorage.getItem('nursingRecords')) || [];
+        const patientId = new URLSearchParams(window.location.search).get('patientId'); // Get patientId from the URL
+        
+        // Get patient data
+        const patients = JSON.parse(localStorage.getItem('patients')) || [];
+        const patient = patients.find(p => p.id == patientId); // Search for the patient by patientId
+
+        tablesContainer.innerHTML = '';
+
+        // Display patient name at the top of the page
+        const nameDisplay = document.getElementById('nameDisplay');
+        nameDisplay.innerText = patient ? `Patient Name: ${patient.name}` : 'Unknown Patient';
+
+        // Filter records by patientId
+        const filteredRecords = records.filter(record => record.patientId == patientId);
+
+        filteredRecords.forEach(record => {
+            const newTable = createTable(record); // Pass only the record
+            tablesContainer.insertAdjacentHTML('beforeend', newTable);
+        });
+
+        // Update recordId to the highest existing ID
+        recordId = filteredRecords.length > 0 ? Math.max(...filteredRecords.map(record => record.id)) + 1 : 0;
+    }
+
+    function createTable(data = {}) {
+        let rows = ''; // Variable to store rows
+
+        // Repeat the row 5 times
+        for (let i = 0; i < 5; i++) {
+            rows += `
+                <tr>
+                    <td><textarea class="time">${data.records && data.records[i] ? data.records[i].time : ''}</textarea></td>
+                    <td><textarea class="temp">${data.records && data.records[i] ? data.records[i].temp : ''}</textarea></td>
+                    <td><textarea class="pulse">${data.records && data.records[i] ? data.records[i].pulse : ''}</textarea></td>
+                    <td><textarea class="resp">${data.records && data.records[i] ? data.records[i].resp : ''}</textarea></td>
+                    <td><textarea class="bp">${data.records && data.records[i] ? data.records[i].bp : ''}</textarea></td>
+                    <td><textarea class="oral">${data.records && data.records[i] ? data.records[i].oral : ''}</textarea></td>
+                    <td><textarea class="n">${data.records && data.records[i] ? data.records[i].n : ''}</textarea></td>
+                    <td><textarea class="iv">${data.records && data.records[i] ? data.records[i].iv : ''}</textarea></td>
+                    <td><textarea class="u">${data.records && data.records[i] ? data.records[i].u : ''}</textarea></td>
+                    <td><textarea class="s">${data.records && data.records[i] ? data.records[i].s : ''}</textarea></td>
+                    <td><textarea class="vo">${data.records && data.records[i] ? data.records[i].vo : ''}</textarea></td>
+                    <td><textarea class="ng">${data.records && data.records[i] ? data.records[i].ng : ''}</textarea></td>
+                    <td><textarea class="medication">${data.records && data.records[i] ? data.records[i].medication : ''}</textarea></td>
+                </tr>`;
+        }
+
+        return `
+            <div class="firstTable" data-id="${data.id || recordId}">
+                <input type="text" placeholder="Unit" value="${data.unit || ''}" class="unit">
+                <input type="date" placeholder="Date" value="${data.date || ''}" class="date">
+                <input type="text" placeholder="Diagnosis" value="${data.diagnosis || ''}" class="diagnosis">
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th colspan="4">Vital Signs</th>
+                            <th colspan="3">Input</th>
+                            <th colspan="3">Output</th>
+                            <th>NG Care</th>
+                            <th>Medications</th>
+                        </tr>
+                        <tr class="subheader">
+                            <th>Time</th>
+                            <th>Temperature</th>
+                            <th>Pulse</th>
+                            <th>Respiration</th>
+                            <th>Blood Pressure</th>
+                            <th>Oral</th>
+                            <th>N.</th>
+                            <th>IV</th>
+                            <th>U</th>
+                            <th>S</th>
+                            <th>Vo</th>
+                            <th></th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${rows} <!-- Repeated rows will be added here -->
+                    </tbody>
+                </table>
+            </div>`;
+    }
+
+    function addTable() {
+        const newTableData = {
+            id: recordId++, // Use the current recordId and update it
+            patientId: new URLSearchParams(window.location.search).get('patientId'), // Add patientId
+            patientName: '', // Leave inputs empty
+            unit: '',
+            date: '',
+            diagnosis: '',
+            records: Array(5).fill({ time: '', temp: '', pulse: '', resp: '', bp: '', oral: '', n: '', iv: '', u: '', s: '', vo: '', ng: '', medication: '' }) // Add 5 empty rows
+        };
+        const tablesContainer = document.getElementById('tablesContainer');
+        const newTable = createTable(newTableData);
+        tablesContainer.insertAdjacentHTML('beforeend', newTable);
+    }
+
+    function saveData() {
+        const tables = document.querySelectorAll('.firstTable');
+        let records = JSON.parse(localStorage.getItem('nursingRecords')) || [];
+        const patientId = new URLSearchParams(window.location.search).get('patientId'); // Get patientId from the URL
+
+        // Filter out records not belonging to the current patient
+        const otherPatientsRecords = records.filter(record => record.patientId !== patientId);
+
+        tables.forEach(table => {
+            const recordId = parseInt(table.getAttribute('data-id')); // Get the record ID
+            const record = {
+                id: recordId,
+                patientId: patientId, // Link the record to the patient using patientId
+                patientName: document.getElementById('nameDisplay').innerText.split(':')[1].trim(), // Get patient name
+                unit: table.querySelector('.unit').value,
+                date: table.querySelector('.date').value,
+                diagnosis: table.querySelector('.diagnosis').value,
+                records: [] // Array to store row data
+            };
+
+            // Collect row data
+            const rows = table.querySelectorAll('tbody tr');
+            rows.forEach(row => {
+                const rowData = {
+                    time: row.querySelector('.time').value,
+                    temp: row.querySelector('.temp').value,
+                    pulse: row.querySelector('.pulse').value,
+                    resp: row.querySelector('.resp').value,
+                    bp: row.querySelector('.bp').value,
+                    oral: row.querySelector('.oral').value,
+                    n: row.querySelector('.n').value,
+                    iv: row.querySelector('.iv').value,
+                    u: row.querySelector('.u').value,
+                    s: row.querySelector('.s').value,
+                    vo: row.querySelector('.vo').value,
+                    ng: row.querySelector('.ng').value,
+                    medication: row.querySelector('.medication').value
+                };
+                record.records.push(rowData); // Add row data to the record
+            });
+
+            // Add the new record to otherPatientsRecords
+            otherPatientsRecords.push(record);
+        });
+
+        // Save all records for all patients to localStorage
+        localStorage.setItem('nursingRecords', JSON.stringify(otherPatientsRecords));
+        alert('Data saved successfully!');
+    }
+
+    window.onload = loadData;
+</script>
+
+    
+</body>
+</html>

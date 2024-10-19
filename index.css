@@ -1,0 +1,175 @@
+* {
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+    text-decoration: none;
+    list-style: none;
+    transition: all 0.2s linear;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+body {
+    margin: 20px;
+    overflow-x: hidden; /* إلغاء التمرير الأفقي */
+    background-color: #f8f9fa; /* لون خلفية الصفحة */
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+th,
+td {
+    border: 1px solid #ddd;
+    padding: 9px;
+    text-align: left;
+}
+
+th {
+    background-color: #28a745; /* لون خلفية رؤوس الأعمدة بالأخضر */
+    color: white; /* لون النص في رؤوس الأعمدة */
+}
+
+img {
+    width: 50px;
+    height: auto;
+}
+
+.search-container {
+    margin: 20px 0;
+    display: flex; /* جعل حاوية البحث مرنة */
+    gap: 10px; /* فاصل بين حقل البحث والأزرار */
+}
+
+#searchInput {
+    padding: 10px;
+    border: 1px solid #28a745; /* لون الحدود لحقل البحث بالأخضر */
+    border-radius: 4px;
+    width: 200px;
+}
+
+button {
+    margin: 5px;
+    padding: 10px;
+    background-color: #28a745; /* لون زر الإضافة بالأخضر */
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #218838; /* لون زر الإضافة عند التحويم */
+}
+
+.error-message {
+    color: red;
+    margin-top: 10px;
+    display: none; /* إخفاء الرسالة في البداية */
+}
+
+fieldset {
+    margin: 10px;
+    padding: 20px;
+    overflow-x: hidden;
+    width: 100%; /* يجعل fieldset يأخذ عرض كامل */
+    border: 2px solid #28a745; /* لون حدود الـ fieldset بالأخضر */
+    border-radius: 8px; /* زوايا دائرية للـ fieldset */
+    background-color: #ffffff; /* لون خلفية الـ fieldset */
+}
+
+legend {
+    font-weight: 600;
+    color: #28a745; /* لون النص في الـ legend بالأخضر */
+}
+
+fieldset .box {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 30px;
+    align-items: center;
+}
+
+fieldset .box div {
+    width: 100%;
+    display: flex;
+    align-items: center;
+}
+
+fieldset .box div h4 {
+    padding-right: 5px;
+    color: #333; /* لون النص لعناوين الحقول */
+}
+
+fieldset div input:not([type="radio"]),select {
+    padding: 8px 5px;
+    font-size: 16px;
+    width: 100%; /* تجعل الحقول تأخذ عرض كامل */
+    border: 1px solid #ccc; /* لون الحدود للحقول */
+    border-radius: 4px; /* زوايا دائرية للحقول */
+}
+
+fieldset div input[type="radio"] {
+    margin: 10px;
+}
+
+fieldset button {
+    margin-top: 20px;
+    width: 100%;
+    background-color: #28a745; /* لون زر الإضافة بالأخضر */
+    color: white;
+}
+
+/* Small screen (mobile) */
+@media (max-width: 767px) {
+    fieldset {
+        width: 100%; /* يجعل fieldset يأخذ عرض كامل على الشاشات الصغيرة */
+    }
+
+    fieldset .box {
+        grid-template-columns: 1fr; /* عرض كامل للحقول على الشاشات الصغيرة */
+    }
+
+    #searchInput {
+        width: 100%; /* جعل حقل البحث يأخذ عرض كامل */
+    }
+}
+
+/* Additional styles for buttons in different states */
+button.deceased {
+    background-color: #dc3545; /* لون أحمر للمرضى المتوفين */
+}
+
+button.recovered {
+    background-color: #ffc107; /* لون أصفر للمرضى المتعافين */
+}
+
+button.reset {
+    background-color: #17a2b8; /* لون تركوازي */
+}
+
+button.edit {
+    background-color: #28a745; /* لون أخضر للتعديل */
+}
+
+button.delete {
+    background-color: #dc3545; /* لون أحمر للحذف */
+}
+
+button.diagnosis {
+    background-color: #28a745; /* لون أخضر للتشخيص */
+}
+
+tr:nth-child(even) {
+    background-color: #f2f2f2; /* إضافة لون مختلف للصفوف الزوجية */
+}
+
+.highlight-deceased {
+    background-color: #dc3545; /* لون الخلفية للمرضى المتوفين */
+}
+
+.highlight-recovered {
+    background-color: #ffc107; /* لون الخلفية للمرضى المتعافين */
+}

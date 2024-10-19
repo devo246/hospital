@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="icon.png">
+    <title>Patient Management System</title>
+    <link rel="stylesheet" href="index.css">
+</head>
+<body>
+    <fieldset>
+        <legend>Add New Patient</legend>
+        <div class="form-group" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px;">
+            <input type="text" id="name" placeholder="Name" required />
+            <input type="number" id="age" placeholder="Age" required />
+            <input type="number" id="phone" placeholder="Phone Number" required />
+            <div style="display: flex; align-items: center;">
+                <h4 style="margin-right: 10px;">Gender:</h4>
+                <label for="male">Male</label>
+                <input type="radio" name="gender" value="Male" required id="male"/>
+                <label for="female">Female</label>
+                <input type="radio" name="gender" value="Female" required id="female" /> 
+            </div>
+            <div>
+                <h4>Admission Date:</h4>
+                <input type="date" id="admissionDate" value="" required />
+            </div>
+            <div>
+                <h4>Discharge Date:</h4>
+                <input type="date" id="dischargeDate" required />
+            </div>
+            <div>
+                <h4>Marital Status:</h4>
+                <select id="maritalStatus" required>
+                    <option value="" disabled selected>Select Status</option>
+                    <option value="Single">Single</option>
+                    <option value="Married">Married</option>
+                </select>
+            </div>
+            <br>
+            <input type="text" placeholder="Case Manager" id="caseManager" required />
+            <input type="text" placeholder="Medical Diagnosis" id="medicalDiagnosis" required />
+        </div>
+        <button onclick="addPatient()">Add Patient</button>
+    </fieldset>
+
+    <div class="search-container">
+        <input type="text" id="searchInput" placeholder="Search by name or ID" />
+        <button onclick="searchPatients()">Search</button>
+        <button onclick="resetSearch()" style="background-color: red">Reset</button>
+        <div class="error-message" id="errorMessage" style="display: none;">No patient found!</div>
+        <!-- رسالة الخطأ -->
+    </div>
+    
+
+    <div style="overflow-x: auto;">
+        <table id="patientTable">
+            <thead>
+                <tr>
+                    <th>No</th>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Age</th>
+                    <th>Phone Number</th>
+                    <th>Gender</th>
+                    <th>Admission Date</th>
+                    <th>Discharge Date</th>
+                    <th>Marital Status</th>
+                    <th>Case Manager</th>
+                    <th>Medical Diagnosis</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Rows will be added here -->
+            </tbody>
+        </table>
+    </div>
+
+    <script src="patient.js"></script>
+</body>
+</html>
